@@ -1,7 +1,10 @@
 FROM ghcr.io/aquasecurity/trivy:latest
 
-RUN trivy i --download-db-only
+RUN apk add --update-cache \
+    tree \
+  && rm -rf /var/cache/apk/*
 
-RUN trivy fs --skip-update --security-checks vuln,config --offline-scan --exit-code 0 /tmp
+RUN trivy i --download-db-only \
+  && trivy fs --skip-update --security-checks vuln,config --offline-scan --exit-code 0 /tmp
 
 ENTRYPOINT [ "trivy", "i", "--skip-update" ]
